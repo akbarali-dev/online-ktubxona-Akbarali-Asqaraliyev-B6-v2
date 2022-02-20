@@ -68,7 +68,7 @@
 <c:if test="${searchGoogle == 'searchGoogle'}">
     <div class="row">
         <div class="col-md-4 mt-4 offset-4">
-            <form action="/courses/courseAllData/${course.id}"  <c:url value="/users"/> >
+            <form action="${pageContext.request.contextPath}/courses/courseAllData/${course.id}"  <c:url value="/users"/> >
                 <div class="card" >
                     <div class="card-body pl-0 pr-0 pt-4 pb-4">
                         <p class="card-title" style="text-align: center">
