@@ -16,6 +16,11 @@ public class ModuleService {
     @Autowired
     ModuleDao modelDao;
 
+
+    public List<ModuleDto> getModuleFromDb(Integer page, String search){
+        List<ModuleDto> moduleDtoList=modelDao.getModuleFromDb(page,search);
+        return moduleDtoList;
+    }
     public List<ModuleDto> getAllModules() {
         List<ModuleDto> moduleDtoList = modelDao.getAllModules();
         return moduleDtoList;
@@ -48,5 +53,12 @@ public class ModuleService {
     public ModuleDto viewModuleByPage(int startPage,int totalPage){
 
         return (ModuleDto) modelDao.viewModuleBYPage(startPage,totalPage);
+    }
+
+
+    public int  countPage() {
+        int count=0;
+        count=modelDao.getCountPage();
+        return count;
     }
 }
