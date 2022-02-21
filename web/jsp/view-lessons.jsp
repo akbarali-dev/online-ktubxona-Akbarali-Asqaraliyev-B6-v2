@@ -25,6 +25,7 @@
                  <c:when test="${param.message != null}">
                      <h1 style="color: #00cc00; font-family: 'Comic Sans MS'; text-align: center">${param.message}</h1>
                  </c:when>
+
              </c:choose>
              <table>
                  <tr>
@@ -34,6 +35,12 @@
           <td><a href="/upload/manualData" class="btn btn-success">Add Manual</a></td>
                  </tr>
              </table>
+             <form action="/lessons/search?search" style="margin-top: 20px;">
+                 <label>
+                     <input type="search" name="search" style="width: 80%;" class="form-control"
+                            placeholder="Search......">
+                 </label>
+             </form>
           <div class="row mt-4">
               <table class="table table-hover table-responsive-sm table-striped">
                   <thead>
@@ -79,31 +86,12 @@
                       </c:forEach>
                   </tr>
                   <br>
-                  <table>
-                      <tr>
-                          <td>
-                              <a href="/courses/test"  class="btn btn-success">Back to Main
-                                  Menu</a>
-                          </td>
-                      </tr>
-                  </table>
               </table>
-
+                                <a href="/courses/test"  class="btn btn-success">Back to Main
+                                    Menu</a>
           </div>
          </div>
      </div>
-
-
-
-
-
-
-
-
-
-
-
-
      <script>
          function makePUTrequest() {
              $.ajax({
