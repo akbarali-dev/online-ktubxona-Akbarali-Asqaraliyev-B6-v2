@@ -7,13 +7,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import uz.pdp.dto.LessonDto;
 import uz.pdp.dto.ModuleDto;
-import uz.pdp.dto.UserDto;
 
 import java.lang.reflect.Type;
-import java.sql.Array;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 @Component
 public class LessonDao {
@@ -74,6 +70,31 @@ public class LessonDao {
                 "update lessons set title='"+lessonDto.getTitle()+"',module_id='"+ lessonDto.getModuleId()+"' where id='" + lessonDto.getId() +"'";
     return jdbcTemplate.update(sqlString);
     }
-    
-    
+
+    public List<LessonDto> getLessonsByPage(Integer currentPage){
+        String sqlQuery = "select *\n" +
+                " from get_lessons_by_page("+currentPage+");";
+        List<LessonDto> lessonDtoListFromDb = jdbcTemplate.query(sqlQuery, (rs, row) -> {
+            LessonDto lessonDto = new LessonDto();
+            lessonDto.setId(UUID.fromString(rs.getString(1)));
+            lessonDto.setTitle(rs.getString(2));
+            lessonDto.setModuleId(UUID.fromString(rs.getString(3)));
+            Object object = rs.getObject(4);
+            Type listType = new TypeToken<ModuleDto>(){}.getType();
+            ModuleDto moduleDto = new Gson().fromJson( object.toString(), listType);
+                  lessonDto.setModuleDto(moduleDto);
+            return lessonDto;
+        });
+        return lessonDtoListFromDb;
+    }
+    public int  pageButtonCount(){
+        int  integer = jdbcTemplate.queryForObject("select count(*) from lessons", (rs, rom) -> {
+            int max_lessons = rs.getInt(1);
+            return max_lessons;
+        });
+        if (integer%5!=0) {
+            return integer/5+1;
+        }
+        return integer/5;
+    }
 }
