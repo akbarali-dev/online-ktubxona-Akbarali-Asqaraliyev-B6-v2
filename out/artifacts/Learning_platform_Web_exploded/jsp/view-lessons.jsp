@@ -26,7 +26,14 @@
                      <h1 style="color: #00cc00; font-family: 'Comic Sans MS'; text-align: center">${param.message}</h1>
                  </c:when>
              </c:choose>
-          <a href="/lessons/addLesson" class="btn btn-success"> + Add</a>
+             <table>
+                 <tr>
+         <td> <a href="/lessons/addLesson" class="btn btn-success">Add</a> </td>
+          <td> <a href=" /upload/videoData" class="btn btn-success">Add Video</a></td>
+          <td><a href="/upload/taskData" class="btn btn-success">Add Task</a></td>
+          <td><a href="/upload/manualData" class="btn btn-success">Add Manual</a></td>
+                 </tr>
+             </table>
           <div class="row mt-4">
               <table class="table table-hover table-responsive-sm table-striped">
                   <thead>
@@ -64,6 +71,24 @@
                 </c:forEach>
                   </tbody>
               </table>
+              <table>
+                  <tr>
+                      <c:set var = "button" scope = "session" value = "${buttonCount}"/>
+                      <c:forEach var = "i" begin = "1" end = "${button}">
+                         <td> <a href="/lessons/page/${i}"  class="btn btn-success">${i}</a></td>
+                      </c:forEach>
+                  </tr>
+                  <br>
+                  <table>
+                      <tr>
+                          <td>
+                              <a href="/courses/test"  class="btn btn-success">Back to Main
+                                  Menu</a>
+                          </td>
+                      </tr>
+                  </table>
+              </table>
+
           </div>
          </div>
      </div>
