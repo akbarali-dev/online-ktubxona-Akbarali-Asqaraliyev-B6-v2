@@ -11,7 +11,7 @@
 <body>
 <div class="row mt-5">
     <div class="col-md-6 offset-3 ">
-        <a style="margin: 0 auto;" href="/courses" class="btn btn-primary">  Courses  </a>
+        <a style="margin: 0 auto;" href="/courses/test" class="btn btn-primary"></a>
 
     </div>
 
