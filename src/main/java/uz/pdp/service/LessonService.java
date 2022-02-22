@@ -15,6 +15,10 @@ public class LessonService {
     @Autowired
     LessonDao lessonDao;
 
+    public List<LessonDto> getLessonByPage(Integer currentPage) {
+        return lessonDao.getLessonsByPage(currentPage);
+    }
+
     public List<LessonDto> getAllLessons(){
         List<LessonDto> allLessons = lessonDao.getAllLessons();
         return allLessons;

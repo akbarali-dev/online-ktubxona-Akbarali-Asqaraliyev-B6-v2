@@ -42,7 +42,8 @@
                        placeholder="Enter course price here">
             </div>
             <div class="form-group">
-                <select class="custom-select custom-select-md mb-3" name="courseId">
+                <label for="moduleForm"><b>Select course:</b></label>
+                <select class="custom-select custom-select-md mb-3" name="courseId" id="moduleForm">
                     <c:forEach var="course" items="${courseList}">
                     <option value="${course.id}">${course.name}</option>
                     </c:forEach>

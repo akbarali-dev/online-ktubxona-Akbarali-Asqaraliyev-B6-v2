@@ -1,4 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%--
   Created by IntelliJ IDEA.
   User: Akbarali
@@ -115,7 +116,7 @@
 <body style="background: #ffffff">
 
 
-<ul>
+<ul style="background: lavender">
     <li>
         <h3 style="text-align: center;  color: white;
   text-shadow: 1px 1px 2px black,
@@ -125,7 +126,7 @@
         </h3>
     </li>
     <li>
-        <a class="active" href="#home">
+        <a class="active" href="/lessons" style="color: white; background: lightslategrey">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                  class="bi bi-house" viewBox="0 0 16 16">
                 <path fill-rule="evenodd"
@@ -142,46 +143,52 @@
 </ul>
 
 <div style="margin-left:25%;padding:1px 16px;height:1000px;">
-    <h2 style="text-align: center">JAVA BACKEND DEVELOPMENT</h2>
+    <h5 style="text-align: center"> ${data.courseDto.name} > ${data.moduleDto.name} >  ${lesson.title}    </h5>
 
 
     <div class="row">
     <div class="col-md-4 mt-4 ">
-        <div class="card" style="width: 60rem; height:40rem; background: #c2fafc">
-            <video autoplay="autoplay" controls>
-                <source src="<c:url value="/assets/videos/${videoPath}"/>"/>
+        <div class="card" style="width: 800px; height:700px; background: #f0fbfc">
+            <video width="800" height="400"  controls>
+                <source src="<c:url value="/assets/fileUpload/lessonVideo/${videoPath}"/>
                 " type="video/mp4">
             </video>
             <div class="card-body">
-                <a href="<c:url value="/download/pdfDownload/{${lesson_id}}"/>" class="btn btn-primary">file download</a>
-                <h5 class="card-title">Welcome</h5>
-                <p class="card-text">${lesson.title}</p>
 
+                <h3 class="card-text">${lesson.title}</h3>
+                <h5>Qo'llanma: </h5>
+                <spring:url value="/download/pdfDownload" var = "downloadURL"/>
+                <a href="<c:url value="/download/pdfDownload/${lesson_id}"/>" class="btn btn-primary">file download</a>
+
+
+                <h5 class="mt-3">Vazifalar</h5>
+                <spring:url value="/download/docDownload" var = "downloadURL"/>
+                <a href="<c:url value="/download/docDownload/${lesson_id}"/>" class="btn btn-primary">file download</a>
             </div>
         </div>
     </div>
     </div>
-    <div class="row">
-        <div class="col-md-8">
-            <c:forEach var="j" begin="1" end="10">
-                <div class="row">
-                    <div class="col-md-4 ">
-                        <div class="card" style="width: 18rem;">
-                            <div class="card-body">
-                                <h5 class="card-title">Card title</h5>
-                                <p class="card-text">Some quick example text to build on the card title and make up the
-                                    bulk
-                                    of
-                                    the
-                                    card's content.</p>
-                                <a href="#" class="btn btn-primary">Go somewhere</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </c:forEach>
-        </div>
-    </div>
+<%--    <div class="row">--%>
+<%--        <div class="col-md-8">--%>
+<%--            <c:forEach var="j" begin="1" end="10">--%>
+<%--                <div class="row">--%>
+<%--                    <div class="col-md-4 ">--%>
+<%--                        <div class="card" style="width: 18rem;">--%>
+<%--                            <div class="card-body">--%>
+<%--                                <h5 class="card-title">Card title</h5>--%>
+<%--                                <p class="card-text">Some quick example text to build on the card title and make up the--%>
+<%--                                    bulk--%>
+<%--                                    of--%>
+<%--                                    the--%>
+<%--                                    card's content.</p>--%>
+<%--                                <a href="#" class="btn btn-primary">Go somewhere</a>--%>
+<%--                            </div>--%>
+<%--                        </div>--%>
+<%--                    </div>--%>
+<%--                </div>--%>
+<%--            </c:forEach>--%>
+<%--        </div>--%>
+<%--    </div>--%>
 
 
 </div>

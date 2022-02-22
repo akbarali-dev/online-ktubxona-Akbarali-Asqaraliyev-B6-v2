@@ -31,6 +31,7 @@ public class FileDownload {
             @PathVariable(required = false)String id
     ){
         model.addAttribute("lesson", fileService.lessonDto(UUID.fromString(id)));
+        model.addAttribute("data", fileService.getAllData(UUID.fromString(id)));
         model.addAttribute("videoPath", fileService.viewVideo(UUID.fromString(id)));
         model.addAttribute("lesson_id", id);
         return "video";
@@ -41,7 +42,7 @@ public class FileDownload {
     public void download(
             @PathVariable(required = false) String id,
             HttpServletRequest request, HttpServletResponse response) throws IOException {
-        File file = new File("D:\\cdisk\\JAVA BACKEND\\5-modul\\test\\Learning-platform-new_new\\src\\main\\java\\uz\\pdp\\dao\\"+fileService.pdfDownload(UUID.fromString(id)));
+        File file = new File("D:/cdisk/JAVA BACKEND/5-modul/yangiii/Learning-platform-new/web/assets/fileUpload/lessonManual/"+fileService.pdfDownload(UUID.fromString(id)));
         InputStream inputStream = new BufferedInputStream(new FileInputStream(file));
         String mimeType = URLConnection.guessContentTypeFromStream(inputStream);
         if (mimeType == null) {
@@ -57,7 +58,7 @@ public class FileDownload {
     public void downloadDoc(
             @PathVariable(required = false) String id,
             HttpServletRequest request, HttpServletResponse response) throws IOException {
-        File file = new File("D:\\cdisk\\JAVA BACKEND\\5-modul\\test\\Learning-platform-new_new\\src\\main\\java\\uz\\pdp\\dao\\"+fileService.pdfDownload(UUID.fromString(id)));
+        File file = new File("D:/cdisk/JAVA BACKEND/5-modul/yangiii/Learning-platform-new/web/assets/fileUpload/lessonTask/"+fileService.pdfDownload(UUID.fromString(id)));
         InputStream inputStream = new BufferedInputStream(new FileInputStream(file));
         String mimeType = URLConnection.guessContentTypeFromStream(inputStream);
         if (mimeType == null) {

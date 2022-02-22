@@ -28,7 +28,7 @@ public class CourseController {
     public String test(
             @RequestParam(required = false, name = "currentPage") Integer currentPage,
             @RequestParam(required = false, name = "condition") String condition,
-            @RequestParam(required = false, name = "search") String text,
+            @RequestParam(required = false, name = "text") String text,
             Model model) {
         List<CourseDto> allCourses;
         int interval = 6;

@@ -16,8 +16,7 @@ public class FileDownloadDao {
     @Autowired
     JdbcTemplate jdbcTemplate;
     public List<FileDto> getAllLessons(UUID uuid) {
-        String sqlQuery = "select *\n" +
-                "from lesson_all_data('"+uuid+"');";
+        String sqlQuery = "Select * from attachment where lesson_id =  '"+uuid+"' ";
         List<FileDto> lessonDtoListFromDb = jdbcTemplate.query(sqlQuery, (rs, row) -> {
             FileDto fileDto = new FileDto();
             fileDto.setId(UUID.fromString(rs.getString(1)));
@@ -38,5 +37,23 @@ public class FileDownloadDao {
             return lesson;
         });
     }
+
+    public CourseModuleLessonDto getCourseModule(UUID id) {
+        String sqlQuery = "select * from get_course_module_lesson where id='"+id+"' ";
+        return jdbcTemplate.queryForObject(sqlQuery, (rs, rowNum) -> {
+            CourseModuleLessonDto lesson = new CourseModuleLessonDto();
+            lesson.setId(UUID.fromString(rs.getString(1)));
+            Object object = rs.getObject(2);
+            ModuleDto moduleDto =  new Gson().fromJson(object.toString(),ModuleDto.class);
+            lesson.setModuleDto(moduleDto);
+
+            Object object1 = rs.getObject(3);
+            CourseDto courseDto =  new Gson().fromJson(object1.toString(),CourseDto.class);
+            lesson.setCourseDto(courseDto);
+            return lesson;
+        });
+    }
+
+
 
 }

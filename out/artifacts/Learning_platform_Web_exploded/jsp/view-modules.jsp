@@ -26,7 +26,12 @@
             </c:when>
         </c:choose>
         <a href="/modules/addModule" class="btn btn-success">+Add</a>
-        <div class="row mt-4">
+        <form action="${pageContext.request.contextPath}/modules?search" class="d-flex" style="width:100%; margin-top: 20px;">
+                <input type="search" name="search" style="width: 85%;" class="form-control"
+                       placeholder="Search......">
+                <a href="/modules" class="btn btn-primary ml-3" style="width: 150px; height: 40px;">  Reset  </a>
+        </form>
+        <div class="row mt-4 mr-0 ml-0">
             <table class="table table-hover table-responsive-sm table-striped">
                 <thead>
                 <tr>
@@ -58,8 +63,19 @@
                 </tbody>
             </table>
         </div>
+        <div class="row">
+            <div class="col-md-4 offset-4">
+                <c:forEach var="j" begin="1" end="${page}">
+                    <a class="btn btn-primary mr-2" href="/modules?page=${(j-1)*3}">${j}</a>
+                </c:forEach>
+            </div>
+        </div>
+<a href="/courses/test" class="btn btn-primary mt-3"> Back </a>
     </div>
 </div>
+
+
+
 <script>
     function makePUTrequest() {
         $.ajax({

@@ -3,6 +3,7 @@ package uz.pdp.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uz.pdp.dao.FileDownloadDao;
+import uz.pdp.dto.CourseModuleLessonDto;
 import uz.pdp.dto.FileDto;
 import uz.pdp.dto.LessonDto;
 
@@ -31,6 +32,11 @@ public class FileService {
         return fileDownloadDao.getLesson(uuid);
     }
 
+    public CourseModuleLessonDto getAllData(UUID uuid){
+        return fileDownloadDao.getCourseModule(uuid);
+    }
+
+
     public String docDownload(UUID uuid) {
         List<FileDto> file = fileDownloadDao.getAllLessons(uuid);
         String path = "";
@@ -47,7 +53,7 @@ public class FileService {
         List<FileDto> file = fileDownloadDao.getAllLessons(uuid);
         String path = "";
         for (FileDto fileDto : file) {
-            if (fileDto.getFileType().equals("application/mp4")) {
+            if (fileDto.getFileType().equals("video/mp4")) {
                 path = fileDto.getFileName();
                 break;
             }
