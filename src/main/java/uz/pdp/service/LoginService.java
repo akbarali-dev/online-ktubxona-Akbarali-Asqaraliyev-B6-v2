@@ -22,7 +22,7 @@ public class LoginService {
         return loginDao.getAllUserDtos(emailOrPhoneNumber, password);
     }
 
-    public UUID sessionGetEmail(HttpServletRequest request) {
+    public UUID sessionGetEmail(HttpServletRequest request, String user) {
         HttpSession session1 = request.getSession();
         if (session1 != null) {
             String username = String.valueOf(session1.getAttribute("username"));
