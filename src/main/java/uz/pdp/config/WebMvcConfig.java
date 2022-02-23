@@ -17,6 +17,7 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 import uz.pdp.dao.CourseDao;
 import uz.pdp.dao.FileDownloadDao;
+import uz.pdp.dao.LoginDao;
 import uz.pdp.dao.UserDao;
 import uz.pdp.service.CourseService;
 import uz.pdp.service.UserService;
@@ -34,8 +35,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
         registry.addResourceHandler("/resources/**").addResourceLocations("/resources/");
 
     }
+
     @Bean
-    public ViewResolver viewResolver(){
+    public ViewResolver viewResolver() {
         InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
         viewResolver.setViewClass(JstlView.class);
         viewResolver.setPrefix("/jsp/");
@@ -45,22 +47,22 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
 
     @Bean
-    public CourseDao courseDao(){
-        return  new CourseDao();
+    public CourseDao courseDao() {
+        return new CourseDao();
     }
 
     @Bean
-    public FileDownloadDao fileDownloadDao(){
-        return  new FileDownloadDao();
+    public FileDownloadDao fileDownloadDao() {
+        return new FileDownloadDao();
     }
 
     @Bean
-    public CourseService courseService(){
-        return  new CourseService();
+    public CourseService courseService() {
+        return new CourseService();
     }
 
     @Bean
-    public JdbcTemplate jdbcTemplate(){
+    public JdbcTemplate jdbcTemplate() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName("org.postgresql.Driver");
         dataSource.setUrl("jdbc:postgresql://localhost:5432/learning_platform");
@@ -70,12 +72,17 @@ public class WebMvcConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    public UserDao userDao(){
+    public UserDao userDao() {
         return new UserDao();
     }
 
     @Bean
-    public UserService userService(){
+    LoginDao loginDao() {
+        return new LoginDao();
+    }
+
+    @Bean
+    public UserService userService() {
         return new UserService();
     }
 
