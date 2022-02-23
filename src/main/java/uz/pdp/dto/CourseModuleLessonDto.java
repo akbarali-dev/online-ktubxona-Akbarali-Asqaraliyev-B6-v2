@@ -1,6 +1,5 @@
 package uz.pdp.dto;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,9 +9,8 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class FileDto {
+public class CourseModuleLessonDto {
     private UUID id;
-    private String fileName;
-    private String fileType;
-    private LessonDto lessonDto;
+    private ModuleDto moduleDto;
+    private CourseDto courseDto;
 }
