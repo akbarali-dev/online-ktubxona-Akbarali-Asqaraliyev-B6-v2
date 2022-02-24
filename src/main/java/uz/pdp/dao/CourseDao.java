@@ -30,7 +30,7 @@ public class CourseDao {
             sqlQuery = "select * from get_all_courses_by_pageable_and_search('"+search+"', "+interval+", "+currentPage+")";
         } else if (interval == null && currentPage == null) {
             sqlQuery = "select *\n" +
-                    "from get_course_by_user_and_module();";
+                        "from get_course_by_user_and_module();";
         } else {
             sqlQuery = "select * from get_course_by_user_and_module(" + interval + ", " + currentPage + ")";
         }
