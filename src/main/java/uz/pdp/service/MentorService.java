@@ -15,8 +15,5 @@ import java.util.UUID;
 public class MentorService {
     @Autowired
     MentorDao mentorDao;
-    public List<CourseDto> getOwnModule(UUID uuid){
-        List<CourseDto> courseDtoList=mentorDao.getOwnCourses(uuid);
-        return courseDtoList;
-    }
+
 }

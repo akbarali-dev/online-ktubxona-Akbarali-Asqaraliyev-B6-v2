@@ -5,6 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import uz.pdp.dto.CourseDto;
 import uz.pdp.service.MentorService;
@@ -17,10 +18,8 @@ import java.util.UUID;
 public class MentorController {
     @Autowired
     MentorService mentorService;
-    @GetMapping
-    public String getOwnCourse(UUID uuid, Model model){
-        List<CourseDto> mentorCourseList=mentorService.getOwnModule(uuid);
-        model.addAttribute("mentorCourses", mentorCourseList);
-        return "view-mentor-courses";
-    }
+   // @PostMapping
+//    public String addCourseMentor(Model model){
+//
+//    }
 }
