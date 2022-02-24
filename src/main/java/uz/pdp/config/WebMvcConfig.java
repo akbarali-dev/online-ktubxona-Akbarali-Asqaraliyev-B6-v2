@@ -30,7 +30,8 @@ import java.io.IOException;
 @ComponentScan(basePackages = "uz.pdp")
 public class WebMvcConfig implements WebMvcConfigurer {
     @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+    public void
+    addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/assets/**").addResourceLocations("/assets/");
         registry.addResourceHandler("/resources/**").addResourceLocations("/resources/");
 
@@ -68,7 +69,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
         dataSource.setDriverClassName("org.postgresql.Driver");
         dataSource.setUrl("jdbc:postgresql://localhost:5432/learning_platform");
         dataSource.setUsername("postgres");
-        dataSource.setPassword("root123");
+        dataSource.setPassword("avaz1999");
         return new JdbcTemplate(dataSource);
     }
 
