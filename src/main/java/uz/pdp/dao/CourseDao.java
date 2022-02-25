@@ -7,12 +7,14 @@ import com.google.gson.reflect.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import uz.pdp.dto.CourseDto;
+import uz.pdp.dto.MentorCourseDto;
 import uz.pdp.dto.ModuleDto;
 import uz.pdp.dto.UserDto;
 
 
 import java.lang.reflect.Type;
 import java.sql.Array;
+import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -27,7 +29,7 @@ public class CourseDao {
     public List<CourseDto> getAllCourses(Integer interval, Integer currentPage, String search) { // TODO: 2/20/2022 add checked and pagabel
         String sqlQuery = "";
         if (search != null) {
-            sqlQuery = "select * from get_all_courses_by_pageable_and_search('"+search+"', "+interval+", "+currentPage+")";
+            sqlQuery = "select * from get_all_courses_by_pageable_and_search('" + search + "', " + interval + ", " + currentPage + ")";
         } else if (interval == null && currentPage == null) {
             sqlQuery = "select *\n" +
                     "from get_course_by_user_and_module();";
@@ -47,7 +49,7 @@ public class CourseDao {
             }.getType();
             List<UserDto> authorList = new Gson().fromJson(authors.toString(), listType);
             courseDto.setAuthors(authorList);
-            if(search==null) {
+            if (search == null) {
                 Array module = rs.getArray(7);
                 Type type = new TypeToken<ArrayList<ModuleDto>>() {
                 }.getType();
@@ -173,5 +175,72 @@ public class CourseDao {
         String sqlQuery = "select count(*) from get_course_by_user_and_module_count();";
         return jdbcTemplate.queryForObject(sqlQuery, (rs, row) -> rs.getInt(1));
     }
+
+
+    public int addNewCourseModuleLesson(MentorCourseDto courseDto, byte[] fileBytes) {
+        String sqlQuery = "Insert into courses(name,description) values('" +
+                courseDto.getName() + "', '" +
+                courseDto.getDescription() + "') returning id";
+
+        String idStr = jdbcTemplate.queryForObject(sqlQuery, (rs, rowNum) -> rs.getString("id"));
+        UUID uuid = UUID.fromString(Objects.requireNonNull(idStr));
+
+        String addImage = "update courses SET image = ? where id = '" + uuid + "' ";
+        jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(addImage);
+            ps.setBytes(1, fileBytes);
+            return ps;
+        });
+
+
+        int res = 0;
+        for (UUID uuid1 : courseDto.getAuthorsId()) {
+            res = jdbcTemplate.update("INSERT INTO authors_modules values (" +
+                    "'" + uuid1 + "','" + uuid + "');");
+        }
+
+        String addModuleQuery = "insert into modules(name, price, course_id) " +
+                "VALUES ('" + courseDto.getModuleName() + "', '" +
+                courseDto.getModulePrice() + "', '" +
+                uuid + "') returning id";
+
+        String moduleId = jdbcTemplate.queryForObject(addModuleQuery, ((rs, rowNum) -> rs.getString("id")));
+
+        UUID moduleUuid = UUID.fromString(Objects.requireNonNull(moduleId));
+
+        String addLessonQuery = "insert into lessons (title, module_id) values (" +
+                "'" + courseDto.getLessonTitle() + "', '" + moduleUuid + "');";
+
+        String lessonId = jdbcTemplate.queryForObject(addLessonQuery, (((rs, rowNum) -> rs.getString("id"))));
+
+        UUID lessonUuid = UUID.fromString(Objects.requireNonNull(lessonId));
+
+        String attachmentQuery = "insert into attachment(video_path, lesson_id)" +
+                " values ('" + courseDto.getLessonVideoPath() + "', '" + lessonUuid + "')";
+
+        int check = jdbcTemplate.update(attachmentQuery);
+
+
+        return check;
+    }
+
+    public List<CourseDto> getAllCourse() {
+
+        String sqlQuery = "select c.id, c.name, c.status, c.is_active from courses c\n" +
+                "join modules m on c.id = m.course_id group by c.id";
+
+        List<CourseDto> courseDtoListFromDb = jdbcTemplate.query(sqlQuery, (rs, row) -> {
+            CourseDto courseDto = new CourseDto();
+            courseDto.setId(UUID.fromString(rs.getString(1)));
+            courseDto.setName(rs.getString(2));
+            courseDto.setStatus(rs.getString(3));
+
+            courseDto.setActive(rs.getBoolean(4));
+
+            return courseDto;
+        });
+        return courseDtoListFromDb;
+    }
+
 
 }
