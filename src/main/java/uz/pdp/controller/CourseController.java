@@ -9,10 +9,14 @@ import uz.pdp.dao.CourseDao;
 import uz.pdp.dto.CourseDto;
 import uz.pdp.dto.MentorCourseDto;
 import uz.pdp.service.CourseService;
+import uz.pdp.service.LoginService;
 import uz.pdp.service.ModuleService;
 import uz.pdp.service.UserService;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,7 +31,12 @@ public class CourseController {
     UserService userService;
 
     @Autowired
+    LoginService loginService;
+
+    @Autowired
     CourseDao courseDao;
+
+    static String role = "MENTOR";
 
 
     @GetMapping("/test")
@@ -133,8 +142,10 @@ public class CourseController {
     }
 
     @GetMapping("/course-table")
-    public String mentorCourses(Model model) {
-        model.addAttribute("courses", courseDao.getAllCourse());
+    public String mentorCourses(Model model, HttpServletRequest request) {
+        UUID id = loginService.sessionGetEmail(request, role);
+        if(id==null)return "login";
+        model.addAttribute("courses", courseDao.getAllCourse(id));
         return "course-table";
     }
 
@@ -144,15 +155,81 @@ public class CourseController {
         return "add-new-course";
     }
 
-    @PostMapping("/add-course")
-    public String addNewCourse(
-            @RequestParam("file") MultipartFile file,
-            @ModelAttribute("courses-table") MentorCourseDto courseDto) {
+    @PostMapping("/editCourse")
+    public String editCourse(@ModelAttribute("courses") MentorCourseDto courseDto,
+                             MultipartFile file) {
         if (!file.isEmpty()) {
             try {
+                byte[] bytes = file.getBytes();
+                courseDao.editCourseMentor(courseDto, bytes);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return "redirect:/courses/course-table";
+    }
+
+    @GetMapping("/editCourse/{id}")
+    public String editCourse(@PathVariable UUID id, Model model) {
+        MentorCourseDto course = courseDao.getCourseByIdNew(id);
+        model.addAttribute("course", course);
+        byte[] encode = Base64.getEncoder().encode(course.getCourseImage());
+        try {
+            String base64Encode = new String(encode, "UTF-8");
+            model.addAttribute("img", base64Encode);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return "edit-course";
+    }
+
+    @GetMapping("/courseMessage/{id}")
+    public String message(@PathVariable UUID id, Model model,
+                          @RequestParam(required = false, name = "message") String message,
+                          HttpServletRequest request) {
+        UUID userId = loginService.sessionGetEmail(request, role);
+        if (userId==null) {
+            return "login";
+        }
+        if (message == null) {
+            model.addAttribute("id", id);
+            return "mentor-send-message-admin";
+        }
+        courseDao.courseSendMessage(id, message, userId);
+        return "redirect:/courses/course-table";
+
+    }
+
+//    @GetMapping("/courseMessage")
+//    public String messageSend(Model model){
+//        model.addAttribute("id", id);
+//        return "mentor-send-message-admin";
+//    }
+
+    @GetMapping("/deleteCourses/{id}")
+    public String delete(@PathVariable UUID id){
+        courseDao.deleteCourseMentor(id);
+        return "redirect:/courses/course-table";
+    }
+
+    @PostMapping("/add-course")
+    public String addNewCourse(MultipartFile file,
+//            @RequestParam("task") MultipartFile task,
+                               @ModelAttribute("courses-table") MentorCourseDto courseDto,
+                               HttpServletRequest request) {
+        UUID uuid = loginService.sessionGetEmail(request, role);
+        if(uuid == null)return "login";
+
+        if (!file.isEmpty()
+//                && !task.isEmpty()
+        ) {
+            try {
                 byte[] fileBytes = file.getBytes();
-                courseDao.addNewCourseModuleLesson(courseDto, fileBytes);
-                return "redirect:/courses/add-course";
+//                byte[] taskByes = task.getBytes();
+                courseDao.addNewCourseModuleLesson(courseDto, fileBytes, uuid
+//                        taskByes
+                );
+                return "redirect:/courses/course-table";
             } catch (IOException e) {
                 e.printStackTrace();
             }

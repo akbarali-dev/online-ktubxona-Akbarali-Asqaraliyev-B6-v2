@@ -15,10 +15,7 @@ import uz.pdp.dto.UserDto;
 import java.lang.reflect.Type;
 import java.sql.Array;
 import java.sql.PreparedStatement;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 public class CourseDao {
 
@@ -32,7 +29,7 @@ public class CourseDao {
             sqlQuery = "select * from get_all_courses_by_pageable_and_search('" + search + "', " + interval + ", " + currentPage + ")";
         } else if (interval == null && currentPage == null) {
             sqlQuery = "select *\n" +
-                        "from get_course_by_user_and_module();";
+                    "from get_course_by_user_and_module();";
         } else {
             sqlQuery = "select * from get_course_by_user_and_module(" + interval + ", " + currentPage + ")";
         }
@@ -48,13 +45,13 @@ public class CourseDao {
             }.getType();
             List<UserDto> authorList = new Gson().fromJson(authors.toString(), listType);
             courseDto.setAuthors(authorList);
-<<<<<<< HEAD
+//<<<<<<< HEAD
+//            if (search == null) {
+//                Array module = rs.getArray(7);
+//=======
             if (search == null) {
-                Array module = rs.getArray(7);
-=======
-            if(search==null) {
                 Array module = rs.getArray(6);
->>>>>>> e47b4ee99b6ac7f6b67ca926fa8a7ea3fcbb14d9
+//>>>>>>> e47b4ee99b6ac7f6b67ca926fa8a7ea3fcbb14d9
                 Type type = new TypeToken<ArrayList<ModuleDto>>() {
                 }.getType();
                 List<ModuleDto> moduleDtoList = new Gson().fromJson(module.toString(), type);
@@ -182,7 +179,7 @@ public class CourseDao {
     }
 
 
-    public int addNewCourseModuleLesson(MentorCourseDto courseDto, byte[] fileBytes) {
+    public int addNewCourseModuleLesson(MentorCourseDto courseDto, byte[] fileBytes, UUID userId) {
         String sqlQuery = "Insert into courses(name,description) values('" +
                 courseDto.getName() + "', '" +
                 courseDto.getDescription() + "') returning id";
@@ -190,20 +187,23 @@ public class CourseDao {
         String idStr = jdbcTemplate.queryForObject(sqlQuery, (rs, rowNum) -> rs.getString("id"));
         UUID uuid = UUID.fromString(Objects.requireNonNull(idStr));
 
-        String addImage = "update courses SET image = ? where id = '" + uuid + "' ";
-        jdbcTemplate.update(connection -> {
-            PreparedStatement ps = connection.prepareStatement(addImage);
-            ps.setBytes(1, fileBytes);
+        String addImage = "update courses set image = ? where id = '" + uuid + "' ";
+
+
+        int update = jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(
+                    addImage);
+            ps.setBytes(1, fileBytes);//This is byte[] of type
             return ps;
         });
 
 
-        int res = 0;
-        for (UUID uuid1 : courseDto.getAuthorsId()) {
-            res = jdbcTemplate.update("INSERT INTO authors_modules values (" +
-                    "'" + uuid1 + "','" + uuid + "');");
-        }
-
+//        String addImage = "update courses SET image = ? where id = '" + uuid + "' ";
+//        jdbcTemplate.update(connection -> {
+//            PreparedStatement ps = connection.prepareStatement(addImage);
+//            ps.setBytes(1, fileBytes);
+//            return ps;
+//        });
         String addModuleQuery = "insert into modules(name, price, course_id) " +
                 "VALUES ('" + courseDto.getModuleName() + "', '" +
                 courseDto.getModulePrice() + "', '" +
@@ -213,26 +213,59 @@ public class CourseDao {
 
         UUID moduleUuid = UUID.fromString(Objects.requireNonNull(moduleId));
 
+        String userModeleQuery = "insert into users_modules(user_id, modules_id) VALUES ('"+userId+"', '"+moduleId+"')";
+        jdbcTemplate.update(userModeleQuery);
+        int res = 0;
+        for (UUID uuid1 : courseDto.getAuthorsId()) {
+            res = jdbcTemplate.update("INSERT INTO authors_modules values (" +
+                    "'" + uuid1 + "','" + moduleUuid + "');");
+        }
+
+
         String addLessonQuery = "insert into lessons (title, module_id) values (" +
-                "'" + courseDto.getLessonTitle() + "', '" + moduleUuid + "');";
+                "'" + courseDto.getLessonTitle() + "', '" + moduleUuid + "') returning id;";
 
         String lessonId = jdbcTemplate.queryForObject(addLessonQuery, (((rs, rowNum) -> rs.getString("id"))));
 
         UUID lessonUuid = UUID.fromString(Objects.requireNonNull(lessonId));
 
-        String attachmentQuery = "insert into attachment(video_path, lesson_id)" +
-                " values ('" + courseDto.getLessonVideoPath() + "', '" + lessonUuid + "')";
+        String attachmentQuery = "insert into attachment(video_path, lesson_id, file_type)" +
+                " values ('" + courseDto.getLessonVideoPath() + "', '" + lessonUuid + "', '" + "video/mp4" + "')";
 
         int check = jdbcTemplate.update(attachmentQuery);
+
+//        String adminMentor = "insert into admins_mentors_requests_courses(user_id, course_id) values ('""')";
+//        jdbcTemplate.update(adminMentor);
 
 
         return check;
     }
 
-    public List<CourseDto> getAllCourse() {
+    public MentorCourseDto getCourseByIdNew(UUID uuid) {
+        String sqlQuery = "select id, name, description, image from courses where id='" + uuid + "'";
+        return jdbcTemplate.queryForObject(sqlQuery, (rs, row) -> {
+            MentorCourseDto courseDto = new MentorCourseDto();
+            courseDto.setCourseId(UUID.fromString(rs.getString(1)));
+            courseDto.setName(rs.getString(2));
+            courseDto.setDescription(rs.getString(3));
+            courseDto.setCourseImage(rs.getBytes(4));
 
-        String sqlQuery = "select c.id, c.name, c.status, c.is_active from courses c\n" +
-                "join modules m on c.id = m.course_id group by c.id";
+
+            return courseDto;
+        });
+    }
+
+    public List<CourseDto> getAllCourse(UUID id) {
+
+        String sqlQuery = "select c.id, c.name, c.status, c.is_active\n" +
+                "from courses c\n" +
+                "         join modules m on c.id = m.course_id\n" +
+                "join users_modules um on m.id = um.modules_id\n" +
+                "where um.user_id = '"+id+"'\n" +
+                "group by c.id;";
+
+//        String sqlQuery = "select c.id, c.name, c.status, c.is_active from courses c\n" +
+//                " join modules m on c.id = m.course_id group by c.id ";
 
         List<CourseDto> courseDtoListFromDb = jdbcTemplate.query(sqlQuery, (rs, row) -> {
             CourseDto courseDto = new CourseDto();
@@ -247,5 +280,58 @@ public class CourseDao {
         return courseDtoListFromDb;
     }
 
+//    public int deleteCourseMentor(UUID uuid) {
+//
+//        String deleteCourse = "select delete_course('"+uuid+"')";
+//
+//        return jdbcTemplate.update(deleteCourse);
+//    }
 
+
+    public int editCourseMentor(MentorCourseDto courseDto, byte[] file) {
+        String sql = "update courses set name = '"+courseDto.getName()+"', " +
+                "description = '"+courseDto.getDescription()+"', image = ? where id = '"+courseDto.getCourseId()+"'";
+        return jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(
+                    sql);
+            ps.setBytes(1, file);//This is byte[] of type
+            return ps;
+        });
+    }
+
+
+    public String deleteCourseMentor(UUID id) {
+        String sqlQuery = "select delete_course('"+id+"')";
+        return jdbcTemplate.queryForObject(sqlQuery, (rs, row) -> {
+            String text = rs.getString(1);
+//            CourseDto courseDto = new CourseDto();
+//            courseDto.setId(UUID.fromString(rs.getString(1)));
+//            courseDto.setName(rs.getString(2));
+//            courseDto.setPrice(rs.getDouble(3));
+//            courseDto.setActive(rs.getBoolean(5));
+//            courseDto.setDescription(rs.getString(4));
+//            Array authors = rs.getArray(6);
+//
+//            Type listType = new TypeToken<ArrayList<UserDto>>() {
+//            }.getType();
+//            List<UserDto> authorList = new Gson().fromJson(authors.toString(), listType);
+//            courseDto.setAuthors(authorList);
+//            Array module = rs.getArray(7);
+//            Type type = new TypeToken<ArrayList<ModuleDto>>() {
+//            }.getType();
+//            List<ModuleDto> moduleDtoList = new Gson().fromJson(module.toString(), type);
+//            courseDto.setModule(moduleDtoList);
+            return text;
+        });
+    }
+
+
+    public int courseSendMessage(UUID courseId, String message, UUID userId) {
+        String query = "insert into" +
+                " admins_mentors_requests_courses" +
+                "(" +
+                "user_id, course_id, description" +
+                ") values ('"+userId+"', '"+courseId+"', '"+message+"') ";
+        return jdbcTemplate.update(query);
+    }
 }

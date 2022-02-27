@@ -60,7 +60,7 @@
 </head>
 <body style="width: 90%; margin: 0 auto; background: white">
 
-<%@include file="/jsp/navbar.jsp" %>
+<%--<%@include file="/jsp/navbar.jsp" %>--%>
 
 <div class="row">
     <c:forEach var="role" items="${roles}">

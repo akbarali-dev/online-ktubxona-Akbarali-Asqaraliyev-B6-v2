@@ -32,11 +32,11 @@
 
 
 
-            <form action="/users" class="d-flex mt-4">
-                <input class="form-control me-2" type="search" name="text" placeholder="Search"
-                       aria-label="Search">
-                <button class="btn btn-outline-warning" name="search" type="submit">Search</button>
-            </form>
+<%--            <form action="/users" class="d-flex mt-4">--%>
+<%--                <input class="form-control me-2" type="search" name="text" placeholder="Search"--%>
+<%--                       aria-label="Search">--%>
+<%--                <button class="btn btn-outline-warning" name="search" type="submit">Search</button>--%>
+<%--            </form>--%>
 
         </div>
         <div class="row mt-4">
@@ -60,10 +60,10 @@
                         <td>${course.name}</td>
                         <td>${course.status}</td>
                         <td><a href="#/${course.id}">modules</a></td>
-                        <td><a href="#">edit</a></td>
+                        <td><a href="/courses/editCourse/${course.id}">edit</a></td>
                         <td>
                                 <c:if test="${course.active==false}">
-                                    <a href="#/${course.id}">delete</a>
+                                    <a href="/courses/deleteCourses/${course.id}">delete</a>
                                 </c:if>
                         </td>
                         <td>
@@ -71,7 +71,7 @@
                                 send
                             </c:if>
                             <c:if test="${course.active==false}">
-                                <a href="#/${course.id}">send</a>
+                                <a href="/courses/courseMessage/${course.id}">send</a>
                             </c:if>
                         </td>
 

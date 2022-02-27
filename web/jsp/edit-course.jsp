@@ -2,8 +2,8 @@
 <%--
   Created by IntelliJ IDEA.
   User: Akbarali
-  Date: 14.02.2022
-  Time: 15:40
+  Date: 2/26/2022
+  Time: 1:51 PM
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
@@ -22,64 +22,34 @@
 </head>
 <body style="background-color: rgba(19,213,246,0.1);">
 <div class="row mt-5 ml-0 mr-0" style="height: 400px;">
-    <div class="col-md-6 offset-3 " style="background-color: white; border-radius:10px ;border: 2px solid gray;box-shadow: 5px 10px 8px #888888;z-index: 11;" >
-        <form action="/courses/add-course" method="POST" class="mt-5 mb-5" enctype="multipart/form-data">
+    <div class="col-md-6 offset-3 "
+         style="background-color: white; border-radius:10px ;border: 2px solid gray;box-shadow: 5px 10px 8px #888888;z-index: 11;">
+        <form action="/courses/editCourse" method="POST" class="mt-5 mb-5" enctype="multipart/form-data">
+
+            <input name="courseId" hidden value="${course.courseId}">
 
             <div class="form-group">
                 <label for="UserName">Course name </label>
-                <input  name="name" type="text" class="form-control" id="UserName"
+                <input value="${course.name}" name="name" type="text" class="form-control" id="UserName"
                        placeholder="Enter course name">
             </div>
 
 
             <div class="form-group">
                 <label for="bio">Description: </label>
-                <textarea  name="description" type="text" class="form-control"
-                           id="bio" placeholder="Enter course description here">Text...</textarea>
+                <textarea name="description" type="text" class="form-control"
+                          id="bio" placeholder="Enter course description here">${course.description}</textarea>
             </div>
 
+            <div class="form-group">
+
+                <img style="width: 400px; height: 400px" src="data:image/jpeg; base64,${img}">
+            </div>
             <div class="form-group">
                 <label for="imageUpload">select course image: </label>
                 <input type="file" name="file" id="imageUpload"
                        accept="image/jpeg"
                 >
-            </div>
-
-
-            <select required   id="mentor" placeholder="Search author or select" multiple name="authorsId">
-                <c:forEach var="mentor" items="${mentors}">
-                    <option  value="${mentor.id}" >${mentor.firstName.substring(0, 1)}. ${mentor.lastName}</option>
-                </c:forEach>
-            </select>
-
-
-
-            <div class="form-group">
-                <label for="UserName">Module name </label>
-                <input  name="moduleName" type="text" class="form-control" id="Moudle"
-                        placeholder="Enter module name">
-            </div>
-
-
-
-            <div class="form-group">
-                <label for="UserName">Module price </label>
-                <input  name="modulePrice" type="number" class="form-control" id="MoudlePrice"
-                        placeholder="price">
-            </div>
-
-
-            <div class="form-group">
-                <label for="UserName">Lesson title </label>
-                <input  name="lessonTitle" type="text" class="form-control" id="LessonTitle"
-                        placeholder="Lesson title">
-            </div>
-
-
-            <div class="form-group">
-                <label for="UserName">Lesson video </label>
-                <input  name="lessonVideoPath" type="text" class="form-control" id="LessonVideo"
-                        placeholder="video path">
             </div>
             <button type="submit" class="btn btn-success">Save</button>
         </form>
@@ -88,39 +58,9 @@
 </div>
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <script>
-    $(document).ready(function (){
-        var multipleCancelButton = new Choices('#mentor',{
+    $(document).ready(function () {
+        var multipleCancelButton = new Choices('#mentor', {
             removeItemButton: true,
             maxItemCount: 5,
             searchResultLimit: 5,
@@ -131,5 +71,15 @@
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<html>
+<head>
+    <title>Title</title>
+</head>
+<body>
+
 </body>
 </html>

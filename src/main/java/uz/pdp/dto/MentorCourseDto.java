@@ -11,8 +11,10 @@ import java.util.UUID;
 @NoArgsConstructor
 @Data
 public class MentorCourseDto {
+    private UUID courseId;
     private String name;
     private String description;
+    private byte[] courseImage;
 
     private UUID[] authorsId;
 
@@ -21,5 +23,6 @@ public class MentorCourseDto {
 
     private String lessonTitle;
     private String lessonVideoPath;
+
 
 }

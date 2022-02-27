@@ -5,7 +5,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import uz.pdp.dao.AdminDao;
 import uz.pdp.service.LoginService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,10 +19,13 @@ import java.util.UUID;
 public class AdminRoleController {
     @Autowired
     LoginService loginService;
+
+    @Autowired
+    AdminDao adminDao;
     static String role = "ADMIN";
 
     @GetMapping
-    public String test(
+    public String mainPage(
             Model model,
             HttpServletRequest request) {
         UUID uuid = loginService.sessionGetEmail(request, role);
@@ -28,17 +34,32 @@ public class AdminRoleController {
             model.addAttribute("firstPassword", "Enter the password first");
             return "/login";
         }
-        return "redirect:/courses/test";
+        return "admin-panel";
     }
 
-
-
-    @GetMapping("/dasfdsf")
-    public String test1(HttpServletRequest request) {
+    @GetMapping("/messages")
+    public String messages(HttpServletRequest request, Model model) {
         UUID uuid = loginService.sessionGetEmail(request, role);
-        if(uuid!=null){
 
+        if (uuid == null) {
+            model.addAttribute("firstPassword", "Enter the password first");
+            return "/login";
         }
-        return null;
+        model.addAttribute("all", "all");
+        model.addAttribute("messages", adminDao.getAllMessage());
+        return "admin-answer-mentor";
     }
+
+    @GetMapping( "/answer/{messageId}")
+    public String answer(@PathVariable(required = false) String messageId,
+                Model model
+    ){
+        model.addAttribute("all", "select");
+        model.addAttribute("messages", adminDao.getMessageById(UUID.fromString(messageId)));
+        return "admin-answ er-mentor";
+    }
+
+
+
+
 }
